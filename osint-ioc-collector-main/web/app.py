@@ -74,23 +74,13 @@ def create_app(config_path=None):
     def get_iocs():
         """Get IOCs list with pagination."""
         try:
-            page = int(request.args.get('page', 1))
-            per_page = int(request.args.get('per_page', 50))
-            ioc_type = request.args.get('type', None)
-            source = request.args.get('source', None)
+            page = 1
+            per_page = 50
 
             db = IOCDatabase(app.config['DB_PATH'])
 
             query = 'SELECT * FROM iocs WHERE is_active = 1'
             params = []
-
-            if ioc_type:
-                query += ' AND ioc_type = ?'
-                params.append(ioc_type)
-
-            if source:
-                query += ' AND source LIKE ?'
-                params.append(f'%{source}%')
 
             query += ' ORDER BY last_seen DESC LIMIT ? OFFSET ?'
             params.extend([per_page, (page - 1) * per_page])
@@ -100,13 +90,6 @@ def create_app(config_path=None):
 
             count_query = 'SELECT COUNT(*) FROM iocs WHERE is_active = 1'
             count_params = []
-            if ioc_type:
-                count_query += ' AND ioc_type = ?'
-                count_params.append(ioc_type)
-            if source:
-                count_query += ' AND source LIKE ?'
-                count_params.append(f'%{source}%')
-
             cursor = db.conn.execute(count_query, count_params)
             total = cursor.fetchone()[0]
 
