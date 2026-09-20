@@ -1,0 +1,25 @@
+{
+  "database": {
+    "path": "data/ioc.db"
+  },
+  "scheduler": {
+    "collection_time": "02:00",
+    "enabled": true
+  },
+  "retention": {
+    "inactive_days": 30,
+    "purge_days": 90
+  },
+  "export": {
+    "auto_export": true,
+    "formats": ["csv", "json"],
+    "include_delta": true,
+    "output_dir": "data/exports"
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/ioc_collector.log",
+    "max_bytes": 52428800,
+    "backup_count": 5
+  }
+}

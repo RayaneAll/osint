@@ -1,0 +1,32 @@
+{
+  "feeds": [
+    {
+      "name": "feodo",
+      "url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
+      "type": "csv",
+      "collector": "feodo_collector",
+      "enabled": true
+    },
+    {
+      "name": "urlhaus",
+      "url": "https://urlhaus.abuse.ch/downloads/csv_recent/",
+      "type": "csv",
+      "collector": "urlhaus_collector",
+      "enabled": true
+    },
+    {
+      "name": "malwarebazaar",
+      "url": "https://bazaar.abuse.ch/export/csv/recent/",
+      "type": "csv",
+      "collector": "malwarebazaar_collector",
+      "enabled": true
+    },
+    {
+      "name": "spamhaus_drop",
+      "url": "https://www.spamhaus.org/drop/drop.txt",
+      "type": "txt",
+      "collector": "spamhaus_collector",
+      "enabled": true
+    }
+  ]
+}

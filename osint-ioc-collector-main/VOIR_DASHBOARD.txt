@@ -1,0 +1,33 @@
+
+════════════════════════════════════════════════════════════
+
+   🎨 VOIR L'INTERFACE GRAPHIQUE - 3 ÉTAPES
+   
+════════════════════════════════════════════════════════════
+
+1️⃣  Ouvrir un Terminal
+
+2️⃣  Copier-coller cette commande:
+
+    ./run_dashboard.sh
+
+3️⃣  Ouvrir votre navigateur sur:
+
+    http://localhost:8080
+
+════════════════════════════════════════════════════════════
+
+✅ C'EST TOUT !
+
+Vous verrez:
+   • Statistiques en direct (17,545 IOCs)
+   • Graphiques colorés
+   • Liste des IOCs
+   • Boutons pour collecter et exporter
+
+════════════════════════════════════════════════════════════
+
+Pour arrêter: Ctrl+C dans le terminal
+
+════════════════════════════════════════════════════════════
+

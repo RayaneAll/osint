@@ -1,0 +1,108 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║     🎨 COMMENT VOIR LE DASHBOARD                             ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+📋 MÉTHODE SIMPLE (3 ÉTAPES):
+
+1️⃣  Ouvrir un Terminal
+
+2️⃣  Lancer ces commandes:
+    cd /Users/ademmedjahed/Project/ioc-collector
+    ./run_dashboard.sh
+
+3️⃣  Ouvrir votre navigateur et aller sur:
+    http://localhost:8080
+
+══════════════════════════════════════════════════════════════
+
+📋 MÉTHODE MANUELLE:
+
+    cd /Users/ademmedjahed/Project/ioc-collector
+    source venv/bin/activate
+    python3 -m web.app
+
+    Puis ouvrir: http://localhost:8080
+
+══════════════════════════════════════════════════════════════
+
+✨ CE QUE VOUS VERREZ:
+
+📊 PAGE D'ACCUEIL (Dashboard)
+   ┌─────────────────────────────────────┐
+   │ 💾 Total IOCs: 17,545               │
+   │ 🔗 URLs: 12,858                     │
+   │ 🔐 Hashes: 2,970                    │
+   │ 🌐 IPs: 1,717                       │
+   └─────────────────────────────────────┘
+
+   🔄 Bouton "Collect Now" - Lance une collecte
+   📄 Bouton "Export CSV" - Télécharge en CSV
+   📋 Bouton "Export JSON" - Télécharge en JSON
+
+   📈 Graphiques:
+   • Répartition par type (donut chart)
+   • Répartition par source (bar chart)
+
+   📜 Activité récente:
+   • Dernières collectes
+   • Statuts de succès/échec
+
+📋 PAGE LISTE DES IOCs
+   • Cliquer sur "IOCs List" dans le menu
+   • Tableau avec filtres
+   • 50 IOCs par page
+   • Filtrer par type (URL, Hash, IP)
+   • Filtrer par source
+
+══════════════════════════════════════════════════════════════
+
+🎨 THÈME:
+   • Design sombre moderne
+   • Graphiques interactifs
+   • Animations fluides
+   • Responsive
+
+══════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT:
+
+Si vous voyez "Address already in use":
+   Le port est occupé (probablement par AirPlay)
+
+   Solution 1: Désactiver AirPlay Receiver
+   Réglages Système → Général → AirDrop et Handoff
+   → Désactiver "AirPlay Receiver"
+
+   Solution 2: Le port a été changé à 8080
+   Utilisez: http://localhost:8080
+
+══════════════════════════════════════════════════════════════
+
+🔄 POUR ARRÊTER:
+   Appuyez sur Ctrl+C dans le terminal
+
+══════════════════════════════════════════════════════════════
+
+💡 ASTUCE:
+   Gardez le dashboard ouvert pendant qu'une collecte
+   automatique tourne pour voir les mises à jour en temps réel!
+
+   Terminal 1: ./run_dashboard.sh
+   Terminal 2: ./run.sh --schedule
+
+══════════════════════════════════════════════════════════════
+
+📖 PLUS D'INFOS:
+   • DASHBOARD_GUIDE.md - Guide complet
+   • README.md - Documentation principale
+
+══════════════════════════════════════════════════════════════
+
+✅ PRÊT À ÊTRE LANCÉ !
+
+   Commande rapide:
+   cd /Users/ademmedjahed/Project/ioc-collector && ./run_dashboard.sh
+
+══════════════════════════════════════════════════════════════

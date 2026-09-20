@@ -1,0 +1,67 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║           IOC COLLECTOR - WEB DASHBOARD                       ║
+║                                                               ║
+║  🎨 Modern Interface | 📊 Real-time Stats | 📈 Charts        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🚀 QUICK START:
+
+   1. Open Terminal
+   2. Navigate to project:
+      cd /Users/ademmedjahed/Project/ioc-collector
+
+   3. Launch dashboard:
+      ./run_dashboard.sh
+
+   4. Open browser:
+      http://localhost:5000
+
+📖 DOCUMENTATION:
+
+   • DASHBOARD_GUIDE.md  - Complete user guide
+   • DASHBOARD_PREVIEW.md - Visual preview
+   • README.md - Main documentation
+
+✨ FEATURES:
+
+   ✓ Real-time statistics display
+   ✓ Interactive charts (Chart.js)
+   ✓ IOCs list with filtering
+   ✓ Manual collection trigger
+   ✓ CSV/JSON export buttons
+   ✓ Recent activity feed
+   ✓ Dark modern theme
+   ✓ Responsive design
+
+🔧 REQUIREMENTS:
+
+   ✓ Python 3.7+
+   ✓ Flask 3.0.0 (auto-installed)
+   ✓ Modern web browser
+   ✓ Port 5000 available
+
+⚡ COMMANDS:
+
+   Start:     ./run_dashboard.sh
+   Stop:      Ctrl+C
+   Logs:      Check terminal output
+
+📊 WHAT YOU'LL SEE:
+
+   • Dashboard page with stats and charts
+   • IOCs list with 17,545+ indicators
+   • Real-time collection monitoring
+   • Export functionality
+   • Activity history
+
+🎯 TIP: Keep the dashboard open while running scheduled
+         collections to see real-time updates!
+
+═══════════════════════════════════════════════════════════════
+
+         Ready to visualize your IOC collection!
+         Launch now: ./run_dashboard.sh
+
+═══════════════════════════════════════════════════════════════

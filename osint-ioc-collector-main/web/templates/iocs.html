@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOCs List - IOC Collector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-shield-alt"></i> IOC Collector</h1>
+                <p>v1.0.0</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/iocs" class="nav-link active">
+                            <i class="fas fa-list"></i>
+                            IOCs List
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h2>IOCs List</h2>
+                <p>Browse and filter collected indicators of compromise</p>
+            </header>
+
+            <!-- Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Active IOCs</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" id="type-filter" onchange="filterIOCs()">
+                            <option value="">All Types</option>
+                            <option value="url">URLs</option>
+                            <option value="hash">Hashes</option>
+                            <option value="ip">IPs</option>
+                            <option value="domain">Domains</option>
+                        </select>
+                        <select class="filter-select" id="source-filter" onchange="filterIOCs()">
+                            <option value="">All Sources</option>
+                            <option value="urlhaus">URLhaus</option>
+                            <option value="malwarebazaar">MalwareBazaar</option>
+                            <option value="spamhaus">Spamhaus</option>
+                            <option value="feodo">Feodo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IOC Value</th>
+                                <th>Type</th>
+                                <th>Threat Type</th>
+                                <th>Source</th>
+                                <th>Confidence</th>
+                                <th>Last Seen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="iocs-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                                    Loading IOCs...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <button onclick="changePage(-1)" id="prev-btn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span id="page-info" style="color: var(--text-secondary);">Page 1</span>
+                    <button onclick="changePage(1)" id="next-btn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentType = '';
+        let currentSource = '';
+
+        async function loadIOCs(page = 1) {
+            try {
+                const params = new URLSearchParams({
+                    page: page,
+                    per_page: 50
+                });
+
+                if (currentType) params.append('type', currentType);
+                if (currentSource) params.append('source', currentSource);
+
+                const response = await fetch(`/api/iocs?${params}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayIOCs(data.iocs);
+                    updatePagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading IOCs:', error);
+                showNotification('Failed to load IOCs', 'error');
+            }
+        }
+
+        function displayIOCs(iocs) {
+            const tbody = document.getElementById('iocs-tbody');
+
+            if (iocs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                            No IOCs found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = iocs.map(ioc => `
+                <tr>
+                    <td>
+                        <div class="ioc-value">${escapeHtml(ioc.ioc_value)}</div>
+                    </td>
+                    <td>
+                        <span class="badge badge-${ioc.ioc_type}">${ioc.ioc_type.toUpperCase()}</span>
+                    </td>
+                    <td>${ioc.threat_type || '-'}</td>
+                    <td>${ioc.source}</td>
+                    <td>${ioc.confidence_score}/100</td>
+                    <td>${formatDate(ioc.last_seen)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePagination(pagination) {
+            currentPage = pagination.page;
+            document.getElementById('page-info').textContent =
+                `Page ${pagination.page} of ${pagination.pages}`;
+            document.getElementById('prev-btn').disabled = pagination.page === 1;
+            document.getElementById('next-btn').disabled = pagination.page === pagination.pages;
+        }
+
+        function changePage(delta) {
+            loadIOCs(currentPage + delta);
+        }
+
+        function filterIOCs() {
+            currentType = document.getElementById('type-filter').value;
+            currentSource = document.getElementById('source-filter').value;
+            currentPage = 1;
+            loadIOCs(1);
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Load on page load
+        loadIOCs();
+    </script>
+</body>
+</html>

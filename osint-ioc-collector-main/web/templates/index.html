@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOC Collector Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-shield-alt"></i> IOC Collector</h1>
+                <p>v1.0.0</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active">
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/iocs" class="nav-link">
+                            <i class="fas fa-list"></i>
+                            IOCs List
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h2>Dashboard</h2>
+                <p>Overview of your IOC collection and recent activity</p>
+            </header>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <button class="btn btn-primary" onclick="triggerCollection()">
+                    <i class="fas fa-sync"></i>
+                    Collect Now
+                </button>
+                <button class="btn btn-secondary" onclick="triggerExport('csv')">
+                    <i class="fas fa-file-csv"></i>
+                    Export CSV
+                </button>
+                <button class="btn btn-secondary" onclick="triggerExport('json')">
+                    <i class="fas fa-file-code"></i>
+                    Export JSON
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-iocs">-</div>
+                    <div class="stat-label">Total Active IOCs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-link"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-urls">-</div>
+                    <div class="stat-label">Malicious URLs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-hashes">-</div>
+                    <div class="stat-label">Malware Hashes</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="total-ips">-</div>
+                    <div class="stat-label">IP Addresses</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>IOCs by Type</h3>
+                    <div class="chart-container">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>IOCs by Source</h3>
+                    <div class="chart-container">
+                        <canvas id="sourceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-card">
+                <h3>Recent Collection Activity</h3>
+                <div class="activity-list" id="activity-list">
+                    <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Loading...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
