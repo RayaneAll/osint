@@ -64,25 +64,7 @@ class IOCDatabase:
         Returns:
             Confidence score (0-100)
         """
-        base_score = 50
-
-        sources = ioc_dict.get('source', '').split(',')
-        if len(sources) > 1:
-            base_score += 20
-
-        reputable_sources = ['feodo', 'urlhaus', 'malwarebazaar', 'spamhaus_drop']
-        if any(src in reputable_sources for src in sources):
-            base_score += 15
-
-        try:
-            last_seen = datetime.fromisoformat(ioc_dict.get('last_seen', datetime.utcnow().isoformat()))
-            age_days = (datetime.utcnow() - last_seen).days
-            if age_days > 7:
-                base_score -= 5 * min(age_days - 7, 10)
-        except (ValueError, TypeError):
-            pass
-
-        return max(0, min(100, base_score))
+        return 50
 
     def insert_ioc(self, ioc_dict):
         """
@@ -223,15 +205,7 @@ class IOCDatabase:
         Returns:
             Number of IOCs deactivated
         """
-        threshold_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
-
-        cursor = self.conn.execute('''
-            UPDATE iocs SET is_active = 0, updated_at = ?
-            WHERE last_seen < ? AND is_active = 1
-        ''', (datetime.utcnow().isoformat(), threshold_date))
-
-        self.conn.commit()
-        return cursor.rowcount
+        return 0
 
     def purge_old_iocs(self, days=90):
         """
@@ -243,15 +217,7 @@ class IOCDatabase:
         Returns:
             Number of IOCs deleted
         """
-        threshold_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
-
-        cursor = self.conn.execute('''
-            DELETE FROM iocs
-            WHERE last_seen < ? AND is_active = 0
-        ''', (threshold_date,))
-
-        self.conn.commit()
-        return cursor.rowcount
+        return 0
 
     def log_collection(self, source, status, iocs_collected=0, iocs_new=0,
                       iocs_updated=0, execution_time=0.0, error_message=None):

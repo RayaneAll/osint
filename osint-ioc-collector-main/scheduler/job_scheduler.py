@@ -202,25 +202,7 @@ class JobScheduler:
         """
         Start scheduler in daemon mode.
         """
-        collection_time = self.config['scheduler']['collection_time']
-
-        self.logger.info(f"Scheduler started - collection scheduled at {collection_time}")
-
-        schedule.every().day.at(collection_time).do(self.scheduled_job)
-
-        self.logger.info("Running initial collection")
-        self.scheduled_job()
-
-        while True:
-            try:
-                schedule.run_pending()
-                time.sleep(60)
-            except KeyboardInterrupt:
-                self.logger.info("Scheduler stopped by user")
-                break
-            except Exception as e:
-                self.logger.error(f"Scheduler error: {e}", exc_info=True)
-                time.sleep(60)
+        raise NotImplementedError
 
     def stop(self):
         """Stop scheduler and cleanup."""

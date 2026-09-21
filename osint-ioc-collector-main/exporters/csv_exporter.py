@@ -67,21 +67,4 @@ class CSVExporter:
         Returns:
             Path to exported file
         """
-        if filename is None:
-            if isinstance(since, datetime):
-                since_str = since.strftime('%Y%m%d')
-            else:
-                since_str = since[:10].replace('-', '')
-            timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-            filename = f"iocs_delta_{since_str}_{timestamp}.csv"
-
-        filepath = os.path.join(self.output_dir, filename)
-
-        with open(filepath, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=self.FIELDS, extrasaction='ignore')
-            writer.writeheader()
-
-            for ioc in iocs:
-                writer.writerow(ioc)
-
-        return filepath
+        raise NotImplementedError
