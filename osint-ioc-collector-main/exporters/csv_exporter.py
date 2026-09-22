@@ -40,20 +40,7 @@ class CSVExporter:
         Returns:
             Path to exported file
         """
-        if filename is None:
-            timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-            filename = f"iocs_full_{timestamp}.csv"
-
-        filepath = os.path.join(self.output_dir, filename)
-
-        with open(filepath, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=self.FIELDS, extrasaction='ignore')
-            writer.writeheader()
-
-            for ioc in iocs:
-                writer.writerow(ioc)
-
-        return filepath
+        raise NotImplementedError
 
     def export_delta(self, iocs, since, filename=None):
         """

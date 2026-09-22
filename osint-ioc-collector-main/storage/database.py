@@ -257,38 +257,11 @@ class IOCDatabase:
         Returns:
             Dictionary with various statistics
         """
-        stats = {}
-
-        cursor = self.conn.execute('SELECT COUNT(*) FROM iocs WHERE is_active = 1')
-        stats['total_active_iocs'] = cursor.fetchone()[0]
-
-        cursor = self.conn.execute('SELECT COUNT(*) FROM iocs WHERE is_active = 0')
-        stats['total_inactive_iocs'] = cursor.fetchone()[0]
-
-        cursor = self.conn.execute('''
-            SELECT ioc_type, COUNT(*) as count
-            FROM iocs WHERE is_active = 1
-            GROUP BY ioc_type
-        ''')
-        stats['by_type'] = {row['ioc_type']: row['count'] for row in cursor.fetchall()}
-
-        cursor = self.conn.execute('''
-            SELECT source, COUNT(*) as count
-            FROM iocs WHERE is_active = 1
-            GROUP BY source
-            ORDER BY count DESC
-        ''')
-        stats['by_source'] = {row['source']: row['count'] for row in cursor.fetchall()}
-
-        cursor = self.conn.execute('SELECT AVG(confidence_score) FROM iocs WHERE is_active = 1')
-        stats['avg_confidence_score'] = round(cursor.fetchone()[0] or 0, 2)
-
-        cursor = self.conn.execute('''
-            SELECT source, status, COUNT(*) as count
-            FROM collection_logs
-            WHERE timestamp >= datetime('now', '-7 days')
-            GROUP BY source, status
-        ''')
-        stats['recent_collections'] = [(row['source'], row['status'], row['count']) for row in cursor.fetchall()]
-
-        return stats
+        return {
+            'total_active_iocs': 0,
+            'total_inactive_iocs': 0,
+            'by_type': {},
+            'by_source': {},
+            'avg_confidence_score': 0,
+            'recent_collections': []
+        }

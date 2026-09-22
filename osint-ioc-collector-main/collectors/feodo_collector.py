@@ -21,46 +21,4 @@ class FeodoCollector(BaseCollector):
         Returns:
             List of IOC dictionaries
         """
-        iocs = []
-
-        try:
-            lines = [line for line in raw_data.split('\n') if line and not line.startswith('#')]
-            csv_data = '\n'.join(lines)
-
-            reader = csv.DictReader(StringIO(csv_data), delimiter=',', quotechar='"')
-
-            for row in reader:
-                if not row:
-                    continue
-
-                ip = normalize_ip(row.get('dst_ip', '').strip().strip('"'))
-
-                if not ip:
-                    continue
-
-                malware = row.get('malware', '').strip()
-                c2_status = row.get('c2_status', '').strip()
-                port = row.get('dst_port', '').strip()
-
-                tags = []
-                if malware:
-                    tags.append(f"malware:{malware}")
-                if port:
-                    tags.append(f"port:{port}")
-                if c2_status:
-                    tags.append(f"status:{c2_status}")
-
-                ioc = self._create_ioc_dict(
-                    ioc_value=ip,
-                    ioc_type='ip',
-                    threat_type='botnet_c2',
-                    tags=','.join(tags) if tags else None,
-                    raw_data=str(row)
-                )
-
-                iocs.append(ioc)
-
-        except Exception as e:
-            self.logger.error(f"Parse error in {self.name}: {e}")
-
-        return iocs
+        raise NotImplementedError
