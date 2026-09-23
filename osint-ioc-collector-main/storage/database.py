@@ -76,7 +76,76 @@ class IOCDatabase:
         Returns:
             Tuple of (ioc_id, is_new) where is_new is True if newly inserted
         """
-        raise NotImplementedError
+        ioc_value = ioc_dict.get('ioc_value')
+        source = ioc_dict.get('source')
+
+        if not ioc_value or not source:
+            raise ValueError("ioc_value and source are required")
+
+        existing = self.get_ioc_by_value(ioc_value)
+
+        now = datetime.utcnow().isoformat()
+
+        if existing:
+            from utils.deduplicator import merge_ioc_data
+            merged = merge_ioc_data(dict(existing), ioc_dict)
+            merged['confidence_score'] = self.calculate_score(merged)
+
+            self.conn.execute('''
+                UPDATE iocs SET
+                    last_seen = ?,
+                    threat_type = ?,
+                    tags = ?,
+                    raw_data = ?,
+                    confidence_score = ?,
+                    source = ?,
+                    updated_at = ?
+                WHERE ioc_value = ?
+            ''', (
+                merged['last_seen'],
+                merged.get('threat_type'),
+                merged.get('tags'),
+                merged.get('raw_data'),
+                merged['confidence_score'],
+                merged['source'],
+                merged['updated_at'],
+                ioc_value
+            ))
+            self.conn.commit()
+            return existing['id'], False
+
+        ioc_id = self._generate_ioc_id(ioc_value, source)
+        ioc_dict['id'] = ioc_id
+        ioc_dict['created_at'] = now
+        ioc_dict['updated_at'] = now
+        ioc_dict['first_seen'] = ioc_dict.get('first_seen', now)
+        ioc_dict['last_seen'] = ioc_dict.get('last_seen', now)
+        ioc_dict['confidence_score'] = self.calculate_score(ioc_dict)
+
+        self.conn.execute('''
+            INSERT INTO iocs (
+                id, ioc_value, ioc_type, threat_type, source,
+                first_seen, last_seen, confidence_score, tags,
+                raw_data, is_active, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            ioc_dict['id'],
+            ioc_dict['ioc_value'],
+            ioc_dict['ioc_type'],
+            ioc_dict.get('threat_type'),
+            ioc_dict['source'],
+            ioc_dict['first_seen'],
+            ioc_dict['last_seen'],
+            ioc_dict['confidence_score'],
+            ioc_dict.get('tags'),
+            ioc_dict.get('raw_data'),
+            ioc_dict.get('is_active', 1),
+            ioc_dict['created_at'],
+            ioc_dict['updated_at']
+        ))
+        self.conn.commit()
+
+        return ioc_id, True
 
     def get_ioc_by_value(self, ioc_value):
         """
