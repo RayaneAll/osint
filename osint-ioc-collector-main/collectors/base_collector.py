@@ -50,29 +50,7 @@ class BaseCollector(ABC):
         Returns:
             Response content as text or None on failure
         """
-        for attempt in range(self.max_retries):
-            try:
-                self.logger.info(f"Fetching {self.name} (attempt {attempt + 1}/{self.max_retries})")
-
-                response = requests.get(
-                    self.url,
-                    headers=self._get_headers(),
-                    timeout=self.timeout
-                )
-
-                response.raise_for_status()
-
-                self.logger.info(f"Successfully fetched {self.name}")
-                return response.text
-
-            except requests.exceptions.RequestException as e:
-                self.logger.warning(f"Fetch attempt {attempt + 1} failed for {self.name}: {e}")
-
-                if attempt < self.max_retries - 1:
-                    time.sleep(self.retry_delay * (attempt + 1))
-                else:
-                    self.logger.error(f"Failed to fetch {self.name} after {self.max_retries} attempts")
-                    return None
+        raise NotImplementedError
 
     @abstractmethod
     def parse(self, raw_data):
