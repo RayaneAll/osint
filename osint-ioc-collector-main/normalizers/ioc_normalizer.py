@@ -12,7 +12,15 @@ def normalize_ip(ip):
     Returns:
         Normalized IP address or None if invalid
     """
-    raise NotImplementedError
+    if not ip:
+        return None
+
+    ip = ip.strip()
+
+    if validate_ip(ip):
+        return ip
+
+    return None
 
 
 def normalize_domain(domain):
@@ -25,7 +33,21 @@ def normalize_domain(domain):
     Returns:
         Normalized domain or None if invalid
     """
-    raise NotImplementedError
+    if not domain:
+        return None
+
+    domain = domain.strip().lower()
+
+    if domain.startswith(('http://', 'https://')):
+        parsed = urlparse(domain)
+        domain = parsed.netloc or parsed.path
+
+    domain = domain.rstrip('.')
+
+    if validate_domain(domain):
+        return domain
+
+    return None
 
 
 def normalize_hash(hash_value):
@@ -38,7 +60,17 @@ def normalize_hash(hash_value):
     Returns:
         Tuple of (normalized_hash, hash_type) or (None, None) if invalid
     """
-    raise NotImplementedError
+    if not hash_value:
+        return None, None
+
+    hash_value = hash_value.strip().lower()
+
+    hash_type = detect_hash_type(hash_value)
+
+    if hash_type and validate_hash(hash_value, hash_type):
+        return hash_value, hash_type
+
+    return None, None
 
 
 def normalize_url(url):
@@ -51,7 +83,27 @@ def normalize_url(url):
     Returns:
         Normalized URL or None if invalid
     """
-    raise NotImplementedError
+    if not url:
+        return None
+
+    url = url.strip()
+
+    if not url.startswith(('http://', 'https://')):
+        url = 'http://' + url
+
+    if validate_url(url):
+        parsed = urlparse(url)
+        normalized = urlunparse((
+            parsed.scheme.lower(),
+            parsed.netloc.lower(),
+            parsed.path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment
+        ))
+        return normalized
+
+    return None
 
 
 def detect_ioc_type(value):
@@ -64,4 +116,22 @@ def detect_ioc_type(value):
     Returns:
         IOC type string ('ip', 'domain', 'hash', 'url') or None
     """
-    raise NotImplementedError
+    if not value:
+        return None
+
+    value = value.strip()
+
+    if validate_ip(value):
+        return 'ip'
+
+    if validate_url(value) and ('://' in value or value.count('/') > 1):
+        return 'url'
+
+    hash_value, hash_type = normalize_hash(value)
+    if hash_type:
+        return 'hash'
+
+    if validate_domain(value):
+        return 'domain'
+
+    return None
